@@ -250,7 +250,6 @@ function MapView({ found, onRaccoonClick }: { found: string[]; onRaccoonClick: (
 function QRScanner({ onFound, found }: { onFound: (raccoon: Raccoon) => void; found: string[] }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [scanning, setScanning] = useState(false);
-  const [manualCode, setManualCode] = useState("");
   const [error, setError] = useState("");
   const [cameraError, setCameraError] = useState(false);
   const streamRef = useRef<MediaStream | null>(null);
@@ -337,25 +336,6 @@ function QRScanner({ onFound, found }: { onFound: (raccoon: Raccoon) => void; fo
           </div>
         )}
 
-        <div className="relative flex items-center my-4">
-          <div className="flex-1 border-t border-border" />
-          <span className="px-3 text-xs text-muted-foreground font-body">или введи код вручную</span>
-          <div className="flex-1 border-t border-border" />
-        </div>
-
-        <form onSubmit={(e) => { e.preventDefault(); if (manualCode.trim()) checkCode(manualCode); }} className="flex gap-2">
-          <input
-            type="text"
-            value={manualCode}
-            onChange={(e) => setManualCode(e.target.value)}
-            placeholder="Код с таблички..."
-            className="flex-1 px-4 py-3 rounded-2xl border border-border bg-white/80 font-body text-sm focus:outline-none focus:ring-2 focus:ring-terracotta/40"
-          />
-          <button type="submit" className="btn-primary px-5 py-3 font-body text-sm">
-            ОК
-          </button>
-        </form>
-
         {error && !cameraError && (
           <p className="mt-3 text-sm text-destructive font-body text-center">{error}</p>
         )}
@@ -365,7 +345,7 @@ function QRScanner({ onFound, found }: { onFound: (raccoon: Raccoon) => void; fo
         <div className="flex items-start gap-3">
           <Icon name="Info" size={16} className="text-teal mt-0.5 flex-shrink-0" />
           <p className="font-body text-xs text-muted-foreground leading-relaxed">
-            Коды находятся на табличках рядом с каждой бронзовой фигурой Туапсенота в городе. Отсканируй QR-код камерой или введи код вручную.
+            Найди бронзовую фигуру Туапсенота в городе и отсканируй QR-код на табличке рядом с ней.
           </p>
         </div>
       </div>
