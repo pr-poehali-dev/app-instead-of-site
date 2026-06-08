@@ -482,7 +482,7 @@ function PartnersView() {
         <p className="font-body text-sm text-muted-foreground mb-4">
           Присоединяйся к проекту — твой бренд увидят тысячи жителей и гостей Туапсе
         </p>
-        <button className="btn-teal px-6 py-3 font-body text-sm w-full">Написать организаторам</button>
+        <a href="mailto:sen555551@mail.ru?subject=Партнёрство — Туапсеноты" className="btn-teal px-6 py-3 font-body text-sm w-full block text-center">Написать организаторам</a>
       </div>
     </div>
   );
