@@ -1,0 +1,18 @@
+{
+  "name": "Туапсеноты — Квест",
+  "short_name": "Туапсеноты",
+  "description": "Найди всех бронзовых Туапсенотов! Городской квест с QR-кодами.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fffdf8",
+  "theme_color": "#c8693a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn.poehali.dev/projects/8f1084b0-91f0-46b1-873c-3fd6ee73d2e4/files/4c16345d-1392-405f-b4d5-e32c6d54e187.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
