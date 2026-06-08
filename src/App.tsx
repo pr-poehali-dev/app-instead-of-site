@@ -362,17 +362,11 @@ function QRScanner({ onFound, found }: { onFound: (raccoon: Raccoon) => void; fo
       </div>
 
       <div className="card-quest p-4">
-        <p className="font-body text-xs text-muted-foreground mb-2 font-bold">🧪 Тестовые коды (демо):</p>
-        <div className="flex flex-wrap gap-2">
-          {RACCOONS.slice(0, 4).map((r) => (
-            <button
-              key={r.id}
-              onClick={() => checkCode(r.qrCode)}
-              className="text-xs bg-sand px-3 py-1.5 rounded-full font-body font-bold text-foreground"
-            >
-              {r.emoji} {r.name}
-            </button>
-          ))}
+        <div className="flex items-start gap-3">
+          <Icon name="Info" size={16} className="text-teal mt-0.5 flex-shrink-0" />
+          <p className="font-body text-xs text-muted-foreground leading-relaxed">
+            Коды находятся на табличках рядом с каждой бронзовой фигурой Туапсенота в городе. Отсканируй QR-код камерой или введи код вручную.
+          </p>
         </div>
       </div>
     </div>
