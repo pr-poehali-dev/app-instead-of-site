@@ -1,5 +1,23 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Icon from "@/components/ui/icon";
+import L from "leaflet";
+
+function makeIcon(raccoon: { emoji: string; name: string; color: string }, isFnd: boolean) {
+  const bg = isFnd
+    ? `linear-gradient(135deg, ${raccoon.color}, hsl(42,85%,60%))`
+    : "#B0A090";
+  const labelBg = isFnd ? raccoon.color : "#8A7A6A";
+  return L.divIcon({
+    className: "",
+    html: `
+      <div style="display:flex;flex-direction:column;align-items:center;transform:translateY(-6px);">
+        <div style="width:38px;height:38px;border-radius:50%;background:${bg};opacity:${isFnd ? 1 : 0.75};display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 3px 8px rgba(0,0,0,0.3);border:2px solid #fff;">${raccoon.emoji}</div>
+        <span style="margin-top:3px;font-family:'Caveat',cursive;font-weight:700;font-size:13px;color:#fff;background:${labelBg};padding:1px 7px;border-radius:999px;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,0.2);">${raccoon.name}</span>
+      </div>`,
+    iconSize: [38, 56],
+    iconAnchor: [19, 56],
+  });
+}
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -12,6 +30,7 @@ const RACCOONS = [
     emoji: "🎣",
     location: "Набережная Туапсе",
     coords: { x: 52, y: 61 },
+    geo: { lat: 44.0926, lng: 39.0772 },
     legend: "На набережной, встречая каждый рассвет с удочкой в лапе, сидит мудрый Енотыч. Он помнит Туапсе ещё совсем молодым и знает тайны каждого камешка на берегу. Местные говорят: потри ему удочку — и рыбалка будет удачной!",
     installed: true,
     color: "#C8783A",
@@ -25,6 +44,7 @@ const RACCOONS = [
     emoji: "🛒",
     location: "Городской рынок",
     coords: { x: 38, y: 45 },
+    geo: { lat: 44.1011, lng: 39.0817 },
     legend: "Добрая, хлебосольная, всегда с корзинкой свежих овощей — Енофья хранит традиции туапсинского гостеприимства. Говорят, она знает рецепт от любой хвори и никого не отпускает голодным.",
     installed: false,
     color: "#C9956B",
@@ -38,6 +58,7 @@ const RACCOONS = [
     emoji: "☕",
     location: "Морской порт",
     coords: { x: 65, y: 72 },
+    geo: { lat: 44.0875, lng: 39.0701 },
     legend: "Надёжный, как маяк — Туапсей всегда знает, куда идти и что делать. Папа семьи стоит с кружкой горячего чая и готов помочь каждому, кто сбился с пути. Потри ему кружку — и дорога будет верной!",
     installed: false,
     color: "#4A7FA5",
@@ -51,6 +72,7 @@ const RACCOONS = [
     emoji: "💐",
     location: "Набережная",
     coords: { x: 30, y: 58 },
+    geo: { lat: 44.0951, lng: 39.0748 },
     legend: "Ласковая, заботливая, добрая — Енира плетёт венки из морских трав и лавандовых веточек. Говорят, букет из её лап приносит в дом любовь и покой. Найди её и загадай сердечное желание!",
     installed: false,
     color: "#8B6BAA",
@@ -64,6 +86,7 @@ const RACCOONS = [
     emoji: "🧺",
     location: "Городской парк",
     coords: { x: 22, y: 38 },
+    geo: { lat: 44.1042, lng: 39.0795 },
     legend: "Маленькая Тыдочка свернулась клубочком в уютном гнёздышке и видит самые сладкие сны. Она мечтает о большом мире и дальних странствиях. Прошепчи ей своё желание — и оно обязательно сбудется!",
     installed: false,
     color: "#C9956B",
@@ -77,6 +100,7 @@ const RACCOONS = [
     emoji: "🧗",
     location: "Скалистый берег",
     coords: { x: 44, y: 30 },
+    geo: { lat: 44.1089, lng: 39.0682 },
     legend: "Шустрый Еновей в кепке набекрень покоряет любые высоты. Ни одна скала в Туапсе для него не преграда! Говорят, кто потрёт ему кепку — тот никогда не побоится трудностей.",
     installed: false,
     color: "#5BA8C4",
@@ -90,6 +114,7 @@ const RACCOONS = [
     emoji: "🏊",
     location: "Городской пляж",
     coords: { x: 72, y: 55 },
+    geo: { lat: 44.0902, lng: 39.0823 },
     legend: "Пухленький и невозмутимый Еносик дремлет на парапете, но стоит волне накатить — он первым прыгает в море. Говорят, он знает под водой каждый камень и прячет там сокровища.",
     installed: false,
     color: "#6BAA6A",
@@ -103,6 +128,7 @@ const RACCOONS = [
     emoji: "✉️",
     location: "Центральная площадь",
     coords: { x: 58, y: 42 },
+    geo: { lat: 44.0978, lng: 39.0764 },
     legend: "Маленький Еноша всегда с посланием в лапках — он разносит добрые новости по всему Туапсе. Там, где появляется Еноша, начинается праздник. Загадай желание и отправь его вместе с его письмом!",
     installed: false,
     color: "#D4973A",
@@ -150,12 +176,45 @@ function Header({ found }: { found: number }) {
 
 function MapView({ found, onRaccoonClick }: { found: string[]; onRaccoonClick: (r: Raccoon) => void }) {
   const [filter, setFilter] = useState<"all" | "found" | "hidden">("all");
+  const mapEl = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const layerRef = useRef<L.LayerGroup | null>(null);
+  const clickRef = useRef(onRaccoonClick);
+  clickRef.current = onRaccoonClick;
 
   const visible = RACCOONS.filter((r) => {
     if (filter === "found") return found.includes(r.id);
     if (filter === "hidden") return !found.includes(r.id);
     return true;
   });
+
+  useEffect(() => {
+    if (!mapEl.current || mapRef.current) return;
+    const map = L.map(mapEl.current, { center: [44.0975, 39.0765], zoom: 14, scrollWheelZoom: true });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap",
+      maxZoom: 19,
+    }).addTo(map);
+    layerRef.current = L.layerGroup().addTo(map);
+    mapRef.current = map;
+    setTimeout(() => map.invalidateSize(), 100);
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const layer = layerRef.current;
+    if (!layer) return;
+    layer.clearLayers();
+    visible.forEach((raccoon) => {
+      const isFnd = found.includes(raccoon.id);
+      L.marker([raccoon.geo.lat, raccoon.geo.lng], { icon: makeIcon(raccoon, isFnd) })
+        .on("click", () => clickRef.current(raccoon))
+        .addTo(layer);
+    });
+  }, [filter, found]);
 
   return (
     <div className="px-4 animate-fade-up">
@@ -174,69 +233,10 @@ function MapView({ found, onRaccoonClick }: { found: string[]; onRaccoonClick: (
       </div>
 
       <div
-        className="relative rounded-3xl overflow-hidden border-2 border-terracotta/20 shadow-lg"
-        style={{
-          paddingBottom: "120%",
-          background: "linear-gradient(160deg, hsl(42,55%,88%) 0%, hsl(185,30%,78%) 40%, hsl(200,40%,72%) 100%)",
-        }}
-      >
-        <div className="absolute inset-0">
-          <div
-            className="absolute bottom-0 right-0 w-2/5 h-2/5 rounded-tl-[60px]"
-            style={{
-              background: "linear-gradient(135deg, hsl(200,50%,68%) 0%, hsl(190,55%,58%) 100%)",
-              opacity: 0.7,
-            }}
-          />
-          <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="hsl(25,35%,18%)" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-          <div className="absolute top-3 right-3 text-3xl opacity-50 select-none">🧭</div>
-          <div className="absolute bottom-8 right-6 font-quest text-white/80 text-lg rotate-[-10deg] select-none">
-            Чёрное море
-          </div>
-
-          {visible.map((raccoon) => {
-            const isFnd = found.includes(raccoon.id);
-            return (
-              <button
-                key={raccoon.id}
-                onClick={() => onRaccoonClick(raccoon)}
-                className="absolute transform -translate-x-1/2 -translate-y-full transition-all hover:scale-110 active:scale-95"
-                style={{ left: `${raccoon.coords.x}%`, top: `${raccoon.coords.y}%` }}
-              >
-                <div
-                  className="map-dot shadow-lg"
-                  style={{
-                    background: isFnd
-                      ? `linear-gradient(135deg, ${raccoon.color}, hsl(42,85%,60%))`
-                      : "#B0A090",
-                    opacity: isFnd ? 1 : 0.65,
-                  }}
-                >
-                  <span className="map-dot-inner">{raccoon.emoji}</span>
-                </div>
-                <div
-                  className="text-center mt-1"
-                  style={{ transform: "translateX(-50%)", position: "absolute", left: "50%", width: "80px" }}
-                >
-                  <span
-                    className="font-quest text-xs font-bold px-1.5 py-0.5 rounded-full text-white shadow"
-                    style={{ background: isFnd ? raccoon.color : "#8A7A6A" }}
-                  >
-                    {raccoon.name}
-                  </span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+        ref={mapEl}
+        className="relative rounded-3xl overflow-hidden border-2 border-terracotta/20 shadow-lg z-0"
+        style={{ height: "65vh", minHeight: 420 }}
+      />
 
       <p className="text-center text-xs text-muted-foreground mt-3 font-body">
         Нажми на метку, чтобы узнать о Туапсеноте
