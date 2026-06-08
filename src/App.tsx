@@ -136,8 +136,8 @@ function Header({ found }: { found: number }) {
         <div className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-body font-bold text-terracotta mb-3 border border-terracotta/20">
           🗺️ Городской квест · Туапсе
         </div>
-        <h1 className="font-quest text-5xl font-bold text-foreground leading-none mb-1">Еноты</h1>
-        <h2 className="font-quest text-3xl text-terracotta leading-none mb-3">Туапсе</h2>
+        <h1 className="font-quest text-5xl font-bold text-foreground leading-none mb-1">Туапсеноты</h1>
+        <h2 className="font-quest text-3xl text-terracotta leading-none mb-3">Квест по городу</h2>
         <p className="font-body text-sm text-muted-foreground">
           Найдено: <span className="font-bold text-terracotta">{found}</span> из {RACCOONS.length}
         </p>
@@ -239,7 +239,7 @@ function MapView({ found, onRaccoonClick }: { found: string[]; onRaccoonClick: (
       </div>
 
       <p className="text-center text-xs text-muted-foreground mt-3 font-body">
-        Нажми на метку, чтобы узнать о еноте
+        Нажми на метку, чтобы узнать о Туапсеноте
       </p>
     </div>
   );
@@ -296,7 +296,7 @@ function QRScanner({ onFound, found }: { onFound: (raccoon: Raccoon) => void; fo
       <div className="card-quest p-5 mb-4">
         <h2 className="font-quest text-3xl text-foreground mb-1">Сканер QR</h2>
         <p className="font-body text-sm text-muted-foreground mb-4">
-          Найди табличку рядом с енотом и отсканируй QR-код
+          Найди табличку рядом с Туапсенотом и отсканируй QR-код
         </p>
 
         {!scanning && !cameraError && (
@@ -394,7 +394,7 @@ function ProgressView({ found, onRaccoonClick }: { found: string[]; onRaccoonCli
           <div>
             <h2 className="font-quest text-3xl text-foreground">Мой прогресс</h2>
             <p className="font-body text-sm text-muted-foreground">
-              {count === 0 ? "Начни квест — ищи первого енота!" :
+              {count === 0 ? "Начни квест — ищи первого Туапсенота!" :
                count < 4 ? "Хорошее начало! Продолжай!" :
                count < 7 ? "Половина семьи найдена! 🎉" :
                count < total ? "Почти все! Ещё чуть-чуть!" :
@@ -426,15 +426,15 @@ function ProgressView({ found, onRaccoonClick }: { found: string[]; onRaccoonCli
               WebkitTextFillColor: "transparent",
             }}
           >
-            Искатель Енотов!
+            Искатель Туапсенотов!
           </h3>
           <p className="font-body text-sm text-muted-foreground mb-4">
-            Ты нашёл всех 8 бронзовых енотов Туапсе. Ты настоящий герой города!
+            Ты нашёл всех 8 бронзовых Туапсенотов. Ты настоящий герой города!
           </p>
           <button
             onClick={() => {
               if (navigator.share) {
-                navigator.share({ title: "Еноты Туапсе", text: "Я нашёл всех 8 бронзовых енотов Туапсе! 🦝🏆", url: window.location.href });
+                navigator.share({ title: "Туапсеноты", text: "Я нашёл всех 8 бронзовых Туапсенотов! 🦝🏆", url: window.location.href });
               }
             }}
             className="btn-primary px-6 py-3 font-body text-sm w-full flex items-center justify-center gap-2"
@@ -478,7 +478,7 @@ function PartnersView() {
     <div className="px-4 animate-fade-up">
       <div className="mb-5">
         <h2 className="font-quest text-3xl text-foreground mb-1">Партнёры</h2>
-        <p className="font-body text-sm text-muted-foreground">Компании, поддерживающие проект «Еноты Туапсе»</p>
+        <p className="font-body text-sm text-muted-foreground">Компании, поддерживающие проект «Туапсеноты»</p>
       </div>
 
       <div className="space-y-3 mb-6">
